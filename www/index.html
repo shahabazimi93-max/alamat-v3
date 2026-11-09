@@ -128,6 +128,18 @@ body{background:#0d100f}
 .pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:3px}
 .pp{aspect-ratio:2/3;overflow:hidden;border-radius:5px;background:var(--s2);cursor:pointer}
 .pp img{width:100%;height:100%;object-fit:cover;display:block}.pp i{display:grid;place-items:center;height:100%;font-size:11px;padding:6px;text-align:center;font-style:normal;color:var(--mu)}
+.wh{display:flex;align-items:center;gap:8px;margin-bottom:10px}.wh h3{flex:1;margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nx{flex:none;padding:6px 13px;border-radius:99px;border:1px solid var(--g);color:var(--g);font-size:12px;font-weight:600}.nx:active{background:var(--gd)}
+.mo{flex:none;width:34px;height:30px;border-radius:99px;border:1px solid var(--ln);color:var(--mu);font-size:18px;line-height:1}
+.sb{display:flex;gap:8px;margin-bottom:12px}.stt:empty{display:none}.stt{margin-top:10px}
+.pp{position:relative}.pp b{position:absolute;left:5px;right:5px;bottom:5px;padding:3px 0;border-radius:8px;background:rgba(10,13,12,.85);color:var(--g);font-size:10.5px;text-align:center;font-weight:600}
+.ash{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s}.ash.open{opacity:1;pointer-events:auto}
+.shs{position:absolute;left:0;right:0;bottom:0;background:#151917;border-top:1px solid var(--ln);border-radius:22px 22px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .35s cubic-bezier(.22,1,.36,1)}.ash.open .shs{transform:none}
+.shs h4{font-size:14px;color:var(--g);margin-bottom:10px}.shs button{display:block;width:100%;text-align:start;padding:13px 14px;border-radius:14px;background:var(--s2);margin-bottom:8px;font-size:14px}.shs button small{display:block;color:var(--mu);font-size:11.5px;margin-top:3px}.shs button.dg{color:#ff6b7f}
+.tst{position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);background:#1d2320;border:1px solid var(--g);color:var(--tx);padding:9px 16px;border-radius:99px;font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:99;max-width:90vw;text-align:center}.tst.on{opacity:1;transform:translate(-50%,0)}
+.sk .fr{aspect-ratio:2/3;border-radius:12px;background:linear-gradient(100deg,#151917 30%,#1f2622 50%,#151917 70%);background-size:200% 100%;animation:shm 1.2s infinite}@keyframes shm{to{background-position:-200% 0}}@media(prefers-reduced-motion:reduce){.sk .fr{animation:none}}
+.gs{margin-top:12px;padding:14px;border-radius:18px;background:#151917;border:1px solid #2b332f}.gs h4{font-size:12.5px;color:var(--mu);margin-bottom:10px}.gs div{display:flex;align-items:center;gap:10px;font-size:12.5px;margin-bottom:7px}.gs span{width:78px}.gs i{flex:1;height:6px;border-radius:9px;background:var(--s2);overflow:hidden}.gs u{display:block;height:100%;background:var(--g);border-radius:9px}.gs b{width:22px;text-align:end;color:var(--g)}
+.dh2{font-size:13px;color:var(--g);margin:14px 0 8px}
 </style></head><body>
 <div id="top">
  <header><span class="logo">علامت<svg viewBox="0 0 24 24"><path d="M3 13l5 5L21 5"/></svg></span>
@@ -163,10 +175,12 @@ body{background:#0d100f}
  <label>کلید TMDB</label><input id="k1" dir="ltr"><label>کلید OMDb (امتیاز IMDb، راتن و متاکریتیک)</label><input id="k2" dir="ltr">
  <label>زبان اطلاعات</label><select id="k3"><option value="fa-IR">فارسی (در صورت وجود)</option><option value="en-US">English</option></select>
  <label>اعلان قسمت‌های جدید و تاریخ انتشار</label><select id="k4"><option value="1">روشن</option><option value="0">خاموش</option></select>
- <button class="pri" onclick="svS()">ذخیره</button>
+ <label>رنگ اصلی</label><select id="k5"><option value="">سبز فسفری</option><option value="#4da3ff">آبی</option><option value="#b388ff">بنفش</option><option value="#ffb347">کهربایی</option></select>
+  <button class="pri" onclick="svS()">ذخیره</button>
  <div class="row2" style="margin-top:14px"><button class="wbtn" onclick="ex()">دریافت پشتیبان</button><button class="wbtn" onclick="$('#fi').click()">بازیابی پشتیبان</button></div>
  <input type="file" id="fi" accept=".json" hidden onchange="im(this.files[0])"></div></div>
 
+<div class="ash" id="ash" onclick="if(event.target==this)this.classList.remove('open')"><div class="shs" id="shs"></div></div><div class="tst" id="tst"></div>
 <script>
 const $=(s,e=document)=>e.querySelector(s),$$=s=>document.querySelectorAll(s);
 let cfg=JSON.parse(localStorage.alc||'{"lang":"fa-IR"}'),lib=JSON.parse(localStorage.all||'{}'),M={},C=new Map,A={t:'movie',s:'trend',pg:'d'},rt=0,rt2=0,stk=[],cur,sT;
@@ -175,25 +189,28 @@ const ic=p=>`<svg viewBox="0 0 24 24">${p}</svg>`;
 const I={s:ic('<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>'),bm:ic('<path d="M6 3h12v18l-6-4-6 4z"/>'),ck:ic('<path d="M4 12.5l5 5L20 6.5"/>'),
 st:ic('<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>'),bk:ic('<path d="M9 5l7 7-7 7"/>'),
 cmp:ic('<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>'),user:ic('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.2-6.5 8-6.5s7 2 8 6.5"/>'),x:ic('<path d="M6 6l12 12M18 6L6 18"/>'),hr:ic('<path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/>'),bell:ic('<path d="M6 17V11a6 6 0 0112 0v6l2 2H4z"/><path d="M10 21h4"/>'),gear:ic('<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>')};
-const SEC={movie:[['rec','پیشنهادی'],['trend','ترند'],['soon','به‌زودی']],tv:[['rec','پیشنهادی'],['trend','ترند'],['soon','به‌زودی']]};
+const SEC={movie:[['rec','پیشنهادی'],['trend','جدید'],['soon','به‌زودی']],tv:[['rec','پیشنهادی'],['trend','جدید'],['soon','به‌زودی']]};
 const sv=()=>localStorage.all=JSON.stringify(lib),fa=n=>(n||n===0||n==='0')&&!isNaN(n)?(+n).toLocaleString('fa-IR',{useGrouping:false,maximumFractionDigits:1}):'—';
 const IMG=(p,w='w342')=>p?`https://image.tmdb.org/t/p/${w}${p}`:'';
 const today=new Date().toISOString().slice(0,10),ovo=s=>{$(s).classList.add('open');try{history.pushState(1,'')}catch{}},ovc=s=>$(s).classList.remove('open');
-function hw(){const o=['#se','#dt','#nf','#sr'].find(x=>$(x).classList.contains('open'));if(o){o=='#dt'?back():ovc(o);return true}if(A.pg=='p'){setPg('d');return true}return false}
+function hw(){if($('#ash').classList.contains('open')){$('#ash').classList.remove('open');return true}const o=['#se','#dt','#nf','#sr'].find(x=>$(x).classList.contains('open'));if(o){o=='#dt'?back():ovc(o);return true}if(A.pg=='p'){setPg('d');return true}return false}
 const GM={28:'اکشن',12:'ماجراجویی',16:'انیمیشن',35:'کمدی',80:'جنایی',99:'مستند',18:'درام',10751:'خانوادگی',14:'فانتزی',36:'تاریخی',27:'ترسناک',10402:'موسیقی',9648:'رازآلود',10749:'عاشقانه',878:'علمی‌تخیلی',10770:'فیلم تلویزیونی',53:'هیجان‌انگیز',10752:'جنگی',37:'وسترن',10759:'اکشن و ماجراجویی',10762:'کودکان',10763:'اخبار',10764:'واقعیت‌نما',10765:'علمی‌تخیلی و فانتزی',10766:'سریال روزانه',10767:'گفت‌وگو',10768:'جنگ و سیاست'};
 const gn=g=>(cfg.lang=='en-US'&&g.name)||GM[g.id]||g.name||'';
 Object.keys(lib).forEach(k=>M[k]=lib[k]);
 
+const hap=()=>navigator.vibrate?.(12),applyAc=()=>{const c=cfg.ac||'#39ff88',r=document.documentElement.style;r.setProperty('--g',c);r.setProperty('--gd',c+'22')};
+async function cf(u){let ca,h;try{ca=await caches.open('al1');h=await ca.match(u);if(h&&Date.now()-(+h.headers.get('x-t'))<108e5)return h}catch{}
+ try{const r=await fetch(u);if(r.ok&&ca)r.clone().blob().then(b=>ca.put(u,new Response(b,{headers:{'x-t':Date.now(),'content-type':'application/json'}}))).catch(()=>{});return r}catch(e){if(h)return h;throw e}}
 function T(p,q={}){const u=new URL('https://api.themoviedb.org/3'+p);
  u.search=new URLSearchParams(Object.entries({api_key:cfg.tmdb,language:cfg.lang,...q}).filter(([,v])=>v!==''&&v!=null&&v!==0));
- const k=u+'';if(C.has(k))return C.get(k);const r=fetch(u).then(r=>r.ok?r.json():Promise.reject(r.status));C.set(k,r);r.catch(()=>C.delete(k));return r}
-const nm=(x,t)=>{t=x.media_type||t;const m={id:x.id,type:t,title:x.title||x.name,year:(x.release_date||x.first_air_date||'').slice(0,4),poster:x.poster_path,vote:x.vote_average,g:x.genre_ids||[],l:x.original_language};M[t+':'+x.id]=m;return m};
+ const k=u+'';if(C.has(k))return C.get(k);const r=cf(u).then(r=>r.ok?r.json():Promise.reject(r.status));C.set(k,r);r.catch(()=>C.delete(k));return r}
+const nm=(x,t)=>{t=x.media_type||t;const m={id:x.id,type:t,title:x.title||x.name,year:(x.release_date||x.first_air_date||'').slice(0,4),poster:x.poster_path,vote:x.vote_average,g:x.genre_ids||(x.genres||[]).map(g=>g.id),l:x.original_language};M[t+':'+x.id]=m;return m};
 const card=m=>{const k=m.type+':'+m.id;return `<div class="card" data-ck="${k}"><div class="fr" onclick="go(()=>D('${m.type}',${m.id}))">${m.poster?`<img loading="lazy" decoding="async" src="${IMG(m.poster,'w185')}">`:'<i class="np">🎬</i>'}<b class="vt">${I.st}${fa(m.vote)}</b><div class="ab"><button data-k="${k}" data-f="wl" onclick="tg(event,'${k}','wl')">${I.bm}</button><button data-k="${k}" data-f="seen" onclick="tg(event,'${k}','seen')">${I.ck}</button></div></div><p class="ct">${m.title||''}</p><p class="cy">${fa(m.year)}${lib[k]?.my?` • من ${fa(lib[k].my)}`:''}</p></div>`};
 
 /* library */
 function ent(k){return lib[k]||(lib[k]={...M[k],eps:{},at:Date.now()})}
 function clean(k){const x=lib[k];if(x&&!x.wl&&!x.seen&&!x.my&&!x.fav&&!Object.keys(x.eps).length)delete lib[k]}
-function tg(e,k,f){e.stopPropagation();const x=ent(k),on=!x[f];x[f]=on;if(f!='fav'&&on)x[f=='wl'?'seen':'wl']=false;x.at=Date.now();
+function tg(e,k,f){e.stopPropagation();hap();const x=ent(k),on=!x[f];x[f]=on;if(f!='fav'&&on)x[f=='wl'?'seen':'wl']=false;x.at=Date.now();
  if(f=='seen'){if(x.type=='movie'){if(on)needRt(k)}else{const id=x.id;SS(id).then(S=>mark(id,S.flatMap(z=>z.eps.filter(p=>p.air_date&&p.air_date<=today).map(p=>[z.n,p.episode_number])),on)).catch(()=>{})}}
  clean(k);sv();paint()}
 function paint(){$$('[data-f]').forEach(b=>b.classList.toggle('on',!!lib[b.dataset.k]?.[b.dataset.f]));sweep()}
@@ -202,14 +219,14 @@ async function SS(id){const k='ss'+id;if(C.has(k))return C.get(k);const p=(async
 const tgE=(id,s,e)=>mark(id,[[s,e]],!lib['tv:'+id]?.eps[s+'-'+e]);
 const tgS=(id,s)=>SS(id).then(S=>{const z=S.find(z=>z.n==s),all=z.eps.every(p=>lib['tv:'+id]?.eps[s+'-'+p.episode_number]);mark(id,z.eps.map(p=>[s,p.episode_number]),!all)});
 async function recalc(id){const k='tv:'+id,x=lib[k];if(!x)return;const S=await SS(id),aired=S.flatMap(z=>z.eps.filter(p=>p.air_date&&p.air_date<=today).map(p=>z.n+'-'+p.episode_number));x.seen=aired.length>0&&aired.every(q=>x.eps[q]);let m=0,n=0;S.forEach(z=>z.eps.forEach(p=>{if(x.eps[z.n+'-'+p.episode_number]){n++;m+=p.runtime||S.rt||40}}));x.min=m;x.ne=n}
-async function mark(id,l,on){const k='tv:'+id,x=ent(k);l.forEach(([s,e])=>on?x.eps[s+'-'+e]=1:delete x.eps[s+'-'+e]);if(on){x.wl=false;x.at=Date.now()}
+async function mark(id,l,on){hap();const k='tv:'+id,x=ent(k);l.forEach(([s,e])=>on?x.eps[s+'-'+e]=1:delete x.eps[s+'-'+e]);if(on){x.wl=false;x.at=Date.now();delete x.st}
  await recalc(id);const S=await SS(id);clean(k);sv();
  $$(`[data-e^="${id}:"]`).forEach(el=>{const q=el.dataset.e.split(':')[1];el.classList.toggle('dn',!!lib[k]?.eps[q])});
  S.forEach(z=>{const n=z.eps.filter(p=>lib[k]?.eps[z.n+'-'+p.episode_number]).length,a=$(`[data-n="${id}:${z.n}"]`);if(a){a.textContent=fa(n)+'/'+fa(z.eps.length);$(`[data-c="${id}:${z.n}"]`).classList.toggle('dn',n==z.eps.length)}});
- paint2();sweep()}
+ const se=$('#stt');if(se)se.innerHTML=sttHTML(k);paint2();sweep()}
 
 /* main view */
-function render(an=1){const v=$('#v'),tok=++rt;v.classList.remove('in');void v.offsetWidth;v.innerHTML='<div class="grid" id="gr"></div><div class="sen" id="sen"><div class="ld"></div></div>';if(an)v.classList.add('in');pager($('#gr'),$('#sen'),p=>feed(A.t,A.s,p),()=>tok==rt,A.t,'io')}
+function render(an=1){const v=$('#v'),tok=++rt;v.classList.remove('in');void v.offsetWidth;v.innerHTML='<div class="grid" id="gr">'+'<div class="card sk"><div class="fr"></div></div>'.repeat(9)+'</div><div class="sen" id="sen"><div class="ld"></div></div>';if(an)v.classList.add('in');pager($('#gr'),$('#sen'),p=>feed(A.t,A.s,p),()=>tok==rt,A.t,'io')}
 const paintEl=r=>r.querySelectorAll('[data-f]').forEach(b=>b.classList.toggle('on',!!lib[b.dataset.k]?.[b.dataset.f])),paint2=()=>paintEl(document);
 function chips(){$('#ch').innerHTML=SEC[A.t].map(([k,l])=>`<button class="chip ${k==A.s?'on':''}" onclick="setS('${k}')">${l}</button>`).join('')}
 function setS(s){A.s=s;chips();render()}
@@ -234,7 +251,7 @@ async function D(t,id){ovo('#dt');const c=$('#dc');c.innerHTML='<div class="ld">
  const wb=(f,l)=>`<button class="wbtn" data-k="${k}" data-f="${f}" onclick="tg(event,'${k}','${f}')">${I[{wl:'bm',seen:'ck',fav:'hr'}[f]]}${l}</button>`;
  c.innerHTML=`<div class="bd" style="background-image:url(${IMG(d.backdrop_path,'w780')})"></div>
  <div class="dh in"><img src="${IMG(d.poster_path)}"><div style="align-self:flex-end"><h1>${title}</h1><p class="sub" dir="auto">${d.original_title||d.original_name||''}${d.tagline?' • '+d.tagline:''}</p><div class="tags">${(d.genres||[]).map(g=>`<span class="tg">${gn(g)}</span>`).join('')}</div></div></div>
- <div class="wbtns">${wb('wl','واچ‌لیست')}${wb('seen',tv?'دیده‌شده':'دیده‌ام')}${wb('fav','علاقه‌مندی')}</div>
+ <div class="wbtns">${wb('wl','واچ‌لیست')}${wb('seen',tv?'دیده‌شده':'دیده‌ام')}${wb('fav','علاقه‌مندی')}</div><div class="wbtns stt" id="stt">${sttHTML(k)}</div>
  <div class="scs" id="sc">${scT(d)}</div>
  <div class="sec" style="padding-top:12px"><div class="my glass" id="my">${myHTML(k)}</div></div>
  <div class="inf"><div><small>سال ساخت</small><span>${fa((d.release_date||d.first_air_date||'').slice(0,4))}</span></div><div><small>${tv?'شبکه':'استودیو'}</small><span>${co}</span></div>
@@ -251,7 +268,7 @@ async function D(t,id){ovo('#dt');const c=$('#dc');c.innerHTML='<div class="ld">
  if(d.belongs_to_collection)T('/collection/'+d.belongs_to_collection.id).then(c=>{const L=c.parts.filter(x=>x.id!=id).sort((a,b)=>(a.release_date||'9')<(b.release_date||'9')?-1:1);L.length?showR('مرتبط • '+c.name,L):showR('مشابه',sm)}).catch(()=>showR('مشابه',sm));else showR('مشابه',sm);
  if(cfg.omdb&&imdb)fetch(`https://www.omdbapi.com/?apikey=${cfg.omdb}&i=${imdb}`).then(r=>r.json()).then(o=>{if(o.Response=='False'||!$('#sc'))return;$('#sc').innerHTML=scT(d,o);if(!cert&&o.Rated&&o.Rated!='N/A')$('#cr').textContent=o.Rated;if(!wr.length&&!(tv&&d.created_by?.length)&&o.Writer&&o.Writer!='N/A')$('#wr').textContent=o.Writer}).catch(()=>{});
  if(tv)SS(id).then(S=>{const e=$('#ssn');if(!e)return;e.innerHTML='<h2>فصل‌ها و قسمت‌ها</h2>'+S.map(z=>{const n=z.eps.filter(p=>lib[k]?.eps[z.n+'-'+p.episode_number]).length;
-  return `<details class="sn"><summary><span class="ck ${n==z.eps.length?'dn':''}" data-c="${id}:${z.n}" onclick="event.preventDefault();tgS(${id},${z.n})">${I.ck}</span><b>فصل ${fa(z.n)}</b><small data-n="${id}:${z.n}">${fa(n)}/${fa(z.eps.length)}</small></summary>${z.eps.map(p=>`<div class="ep ${lib[k]?.eps[z.n+'-'+p.episode_number]?'dn':''}" data-e="${id}:${z.n}-${p.episode_number}" onclick="tgE(${id},${z.n},${p.episode_number})"><span class="ck">${I.ck}</span><span>${fa(p.episode_number)}. ${p.name||''}</span><small>${p.air_date||''}</small></div>`).join('')}</details>`}).join('')}).catch(()=>{});
+  return `<details class="sn"><summary><span class="ck ${n==z.eps.length?'dn':''}" data-c="${id}:${z.n}" onclick="event.preventDefault();tgS(${id},${z.n})">${I.ck}</span><b>فصل ${fa(z.n)}</b><small data-n="${id}:${z.n}">${fa(n)}/${fa(z.eps.length)}</small></summary>${z.eps.map(p=>`<div class="ep ${lib[k]?.eps[z.n+'-'+p.episode_number]?'dn':''}" data-e="${id}:${z.n}-${p.episode_number}" onclick="tgE(${id},${z.n},${p.episode_number})"><span class="ck">${I.ck}</span><span>${fa(p.episode_number)}. ${p.name||''}</span><small>${p.air_date?new Date(p.air_date+'T00:00').toLocaleDateString('fa-IR'):''}</small></div>`).join('')}</details>`}).join('')}).catch(()=>{});
  }catch(e){c.innerHTML='<div class="em">خطا در دریافت اطلاعات.</div>'}}
 async function P(id){ovo('#dt');const c=$('#dc');c.innerHTML='<div class="ld"></div>';
  try{const p=await T('/person/'+id,{append_to_response:'combined_credits'});let bio=p.biography;if(!bio&&cfg.lang!='en-US')try{bio=(await T('/person/'+id,{language:'en-US'})).biography}catch{}
@@ -274,29 +291,48 @@ function runS(){const q=$('#q').value.trim(),t=S.t,{g,r,y1,y2,o,l}=S,tok=++rt2,r
  pager(rs,$('#rss'),load,()=>tok==rt2,t,'io2')}
 
 /* settings & backup */
-function svS(){cfg={tmdb:$('#k1').value.trim(),omdb:$('#k2').value.trim(),lang:$('#k3').value,nf:$('#k4').value=='1'};localStorage.alc=JSON.stringify(cfg);C.clear();$('#gc').innerHTML='';ovc('#se');render();if(cfg.nf&&!LN&&window.Notification&&Notification.permission=='default')Notification.requestPermission();checkNew()}
-const ex=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(lib)],{type:'application/json'}));a.download='alamat-backup.json';a.click()};
+function svS(){cfg={tmdb:$('#k1').value.trim(),omdb:$('#k2').value.trim(),lang:$('#k3').value,nf:$('#k4').value=='1',ac:$('#k5').value};localStorage.alc=JSON.stringify(cfg);C.clear();caches?.delete('al1');applyAc();$('#gc').innerHTML='';ovc('#se');render();if(cfg.nf&&!LN&&window.Notification&&Notification.permission=='default')Notification.requestPermission();checkNew()}
+const ex=()=>{localStorage.albk=Date.now();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(lib)],{type:'application/json'}));a.download='alamat-backup.json';a.click()};
 const im=f=>f&&f.text().then(t=>{try{lib=JSON.parse(t);Object.keys(lib).forEach(k=>M[k]=lib[k]);sv();ovc('#se');render()}catch{alert('فایل نامعتبر است')}});
 
 /* profile */
-const PT=[['watching','در حال تماشا','در حال تماشا'],['tv','سریال‌ها','سریال‌های دیده‌شده'],['movie','فیلم‌ها','فیلم‌های دیده‌شده'],['fav','علاقه‌مندی','علاقه‌مندی‌ها'],['wl','واچ‌لیست','واچ‌لیست']];let PA='watching';
+const PT=[['watching','در حال تماشا','در حال تماشا'],['tv','سریال‌ها','سریال‌های دیده‌شده'],['movie','فیلم‌ها','فیلم‌های دیده‌شده'],['fav','علاقه‌مندی','علاقه‌مندی‌ها'],['wl','واچ‌لیست','واچ‌لیست'],['hold','کنار گذاشته','کنار گذاشته‌ها']];let PA='watching';
 const hid=(t,x)=>{const e=lib[t+':'+x.id];return !!e&&!!(e.wl||e.seen||Object.keys(e.eps||{}).length)};
 const pn=()=>pill($('#bn .on'),$('#bnp'));
 function sweep(){if(A.pg!='d')return;$$('#gr .card').forEach(c=>{const e=lib[c.dataset.ck];if(e&&(e.wl||e.seen||Object.keys(e.eps||{}).length)&&!c.classList.contains('gone')){c.classList.add('gone');setTimeout(()=>c.remove(),500)}})}
-function pList(k){const f={watching:x=>x.type=='tv'&&!x.seen&&Object.keys(x.eps||{}).length,tv:x=>x.type=='tv'&&x.seen,movie:x=>x.type=='movie'&&x.seen,fav:x=>x.fav,wl:x=>x.wl}[k];return Object.values(lib).filter(f).sort((a,b)=>b.at-a.at)}
+function pList(k,sub){const f={watching:x=>x.type=='tv'&&!x.seen&&!x.st&&Object.keys(x.eps||{}).length,hold:x=>x.type=='tv'&&!!x.st,tv:x=>x.type=='tv'&&x.seen,movie:x=>x.type=='movie'&&x.seen,fav:x=>x.fav,wl:x=>x.wl}[k];return Object.values(lib).filter(x=>f(x)&&(!sub||x.type==sub)).sort((a,b)=>b.at-a.at)}
 const tf=m=>[Math.floor(m/1440),Math.floor(m%1440/60),m%60];
 function needRt(k){const x=lib[k];if(!x||x.type!='movie'||x.rt!=null)return;T('/movie/'+x.id).then(d=>{if(lib[k]){lib[k].rt=d.runtime||0;sv();if(A.pg=='p')renderStats(0)}}).catch(()=>{})}
 function count(root){root.querySelectorAll('[data-n]').forEach(e=>{const to=+e.dataset.n;if(!to)return;let t0;e.textContent=fa(0);const f=t=>{t0??=t;const k=Math.min(1,(t-t0)/800);e.textContent=fa(Math.round(to*(1-Math.pow(1-k,3))));if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
+const gHTML=L=>{const gc={};L.filter(x=>x.seen||x.my||x.ne>0).forEach(x=>(x.g||[]).forEach(i=>gc[i]=(gc[i]||0)+1));const t=Object.entries(gc).sort((a,b)=>b[1]-a[1]).slice(0,5),m=t[0]?.[1]||1;return t.length?`<div class="gs"><h4>ژانرهای محبوب</h4>${t.map(([i,n])=>`<div><span>${GM[i]||''}</span><i><u style="width:${n/m*100}%"></u></i><b>${fa(n)}</b></div>`).join('')}</div>`:''};
 function renderStats(an=1){const L=Object.values(lib),mv=L.filter(x=>x.type=='movie'&&x.seen),tv=L.filter(x=>x.type=='tv'&&(x.ne||0)>0),mm=mv.reduce((a,x)=>a+(x.rt||0),0),tm=tv.reduce((a,x)=>a+(x.min||0),0),ne=tv.reduce((a,x)=>a+(x.ne||0),0),[d,h]=tf(mm+tm);
- const c=(t,m,p)=>`<div class="sc2"><h4>${t}</h4><div class="tm">${tf(m).map((v,i)=>`<div><b data-n="${v}">${fa(v)}</b><small>${['روز','ساعت','دقیقه'][i]}</small></div>`).join('')}</div><p>${p}</p></div>`,el=$('#phd');
- el.innerHTML=`<div class="hero"><small>مجموع زمان تماشا</small><b><span data-n="${d}">${fa(d)}</span> روز و <span data-n="${h}">${fa(h)}</span> ساعت</b><p>${fa(ne)} قسمت • ${fa(mv.length)} فیلم</p></div><div class="sg">${c('سریال‌ها',tm,`${fa(ne)} قسمت دیده‌شده`)}${c('فیلم‌ها',mm,`${fa(mv.length)} فیلم دیده‌شده`)}</div>`;if(an)count(el)}
-function renderSec(an=1){const L=pList(PA),sc=PT.find(x=>x[0]==PA),v=$('#pv');let h;
+ const c=(t,m,p)=>`<div class="sc2"><h4>${t}</h4><div class="tm">${tf(m).map((v,i)=>`<div><b data-n="${v}">${fa(v)}</b><small>${['روز','ساعت','دقیقه'][i]}</small></div>`).join('')}</div><p>${p}</p></div>`,el=$('#phd'),gh=gHTML(L);
+ el.innerHTML=`<div class="hero"><small>مجموع زمان تماشا</small><b><span data-n="${d}">${fa(d)}</span> روز و <span data-n="${h}">${fa(h)}</span> ساعت</b><p>${fa(ne)} قسمت • ${fa(mv.length)} فیلم</p></div><div class="sg">${c('سریال‌ها',tm,`${fa(ne)} قسمت دیده‌شده`)}${c('فیلم‌ها',mm,`${fa(mv.length)} فیلم دیده‌شده`)}</div>${gh}`;if(an)count(el)}
+const PS={fav:'movie',wl:'movie'};
+function renderSec(an=1){const sub=PA=='fav'||PA=='wl';if(sub&&!pList(PA,PS[PA]).length&&pList(PA,PS[PA]=='movie'?'tv':'movie').length)PS[PA]=PS[PA]=='movie'?'tv':'movie';
+ const L=pList(PA,sub?PS[PA]:0),sc=PT.find(x=>x[0]==PA),v=$('#pv');let h;
  $('#pch').innerHTML=PT.map(([k,l])=>`<button class="chip ${k==PA?'on':''}" onclick="setP('${k}')">${l}<i>${fa(pList(k).length)}</i></button>`).join('');
- $('#pt').innerHTML=`<h3>${sc[2]}</h3><span>${fa(L.length)}</span>`;
- if(PA=='watching')h=L.length?L.map(x=>`<section class="wb"><h3 onclick="go(()=>D('tv',${x.id}))">${x.title}</h3><div class="hs" id="w${x.id}"><div class="ld"></div></div></section>`).join(''):'<div class="em">هنوز سریالی در حال تماشا نداری.<br>در صفحهٔ سریال، قسمت‌هایی که دیده‌ای را تیک بزن.</div>';
- else h=L.length?`<div class="pg">${L.map(x=>`<div class="pp" onclick="go(()=>D('${x.type}',${x.id}))">${x.poster?`<img loading="lazy" decoding="async" src="${IMG(x.poster,'w185')}">`:`<i>${x.title||''}</i>`}</div>`).join('')}</div>`:'<div class="em">اینجا هنوز خالیه.</div>';
- v.classList.remove('in');void v.offsetWidth;v.innerHTML=h;if(an)v.classList.add('in');
+ $('#pt').innerHTML=`<h3>${sc[2]}${sub?' • '+(PS[PA]=='movie'?'فیلم':'سریال'):''}</h3><span>${fa(L.length)}</span>`;
+ const sw=sub?`<div class="sb">${[['movie','فیلم‌ها'],['tv','سریال‌ها']].map(([t,l])=>`<button class="chip ${PS[PA]==t?'on':''}" onclick="setSub('${t}')">${l}<i>${fa(pList(PA,t).length)}</i></button>`).join('')}</div>`:'';
+ const ems={watching:'هنوز سریالی در حال تماشا نداری.<br>در صفحهٔ سریال، قسمت‌هایی که دیده‌ای را تیک بزن.',hold:'چیزی کنار نگذاشته‌ای.<br>سریالی که نیمه‌کاره ماند را با «⋯» از «در حال تماشا» اینجا بفرست.'};
+ if(PA=='watching')h=L.length?L.map(x=>`<section class="wb"><div class="wh"><h3 onclick="go(()=>D('tv',${x.id}))">${x.title}</h3><button class="nx" onclick="nextEp(${x.id})">قسمت بعدی</button><button class="mo" onclick="sheet(${x.id})" aria-label="گزینه‌ها">⋯</button></div><div class="hs" id="w${x.id}"><div class="ld"></div></div></section>`).join(''):`<div class="em">${ems.watching}</div>`;
+ else h=L.length?`<div class="pg">${L.map(x=>`<div class="pp" onclick="go(()=>D('${x.type}',${x.id}))">${x.poster?`<img loading="lazy" decoding="async" src="${IMG(x.poster,'w185')}">`:`<i>${x.title||''}</i>`}${PA=='hold'?`<b>${x.st=='drop'?'رها شده':'نگه‌داشته'}</b>`:''}</div>`).join('')}</div>`:`<div class="em">${ems[PA]||'اینجا هنوز خالیه.'}</div>`;
+ v.classList.remove('in');void v.offsetWidth;v.innerHTML=sw+h;if(an)v.classList.add('in');
  if(PA=='watching')L.forEach(x=>SS(x.id).then(S=>{const e=$('#w'+x.id);if(!e)return;e.innerHTML=S.flatMap(z=>z.eps.map(p=>`<div class="ec ${lib['tv:'+x.id]?.eps[z.n+'-'+p.episode_number]?'dn':''}" data-e="${x.id}:${z.n}-${p.episode_number}" onclick="tgE(${x.id},${z.n},${p.episode_number})"><img loading="lazy" decoding="async" src="${IMG(p.still_path,'w300')}"><p><small>فصل ${fa(z.n)} • قسمت ${fa(p.episode_number)}</small>${p.name||''}</p></div>`)).join('');e.querySelector('.ec:not(.dn)')?.scrollIntoView({inline:'center',block:'nearest'})}).catch(()=>{}))}
+const setSub=t=>{PS[PA]=t;renderSec()};
+let tt;const toast=m=>{const e=$('#tst');e.textContent=m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2200)};
+const aired=S=>S.flatMap(z=>z.eps.filter(p=>p.air_date&&p.air_date<=today).map(p=>[z.n,p.episode_number]));
+async function nextEp(id){const k='tv:'+id;try{const n=aired(await SS(id)).find(([s,e])=>!lib[k]?.eps[s+'-'+e]);if(!n)return toast('قسمت تازه‌ای برای دیدن نیست');await mark(id,[n],true);toast(`فصل ${fa(n[0])} • قسمت ${fa(n[1])} دیده شد`);if(lib[k]?.seen)renderP(0);else $('#w'+id+' .ec:not(.dn)')?.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'})}catch{toast('خطا در اتصال')}}
+function sheet(id){const x=lib['tv:'+id];if(!x)return;const o=(f,t,d,c='')=>`<button class="${c}" onclick="act(${id},'${f}')">${t}${d?`<small>${d}</small>`:''}</button>`;
+ $('#shs').innerHTML=`<h4>${x.title}</h4>`+(x.st?o('go','برگردان به «در حال تماشا»'):'')+(x.st!='hold'?o('hold','فعلاً نگه‌دار','بعداً ادامه می‌دهم؛ می‌رود به «کنار گذاشته»'):'')+(x.st!='drop'?o('drop','رها کردم','دیگر ادامه نمی‌دهم؛ اعلان قسمت جدیدش هم نمی‌آید'):'')+o('all','همه را دیده‌ام','همهٔ قسمت‌های پخش‌شده تیک می‌خورد')+o('clr','پاک کردن پیشرفت','تیک قسمت‌ها برداشته می‌شود','dg');$('#ash').classList.add('open')}
+async function act(id,f){const k='tv:'+id,x=lib[k];$('#ash').classList.remove('open');if(!x)return;
+ if(f=='go')delete x.st;else if(f=='hold'||f=='drop')x.st=f;
+ else if(f=='all'){try{await mark(id,aired(await SS(id)),true)}catch{return toast('خطا در اتصال')}}
+ else if(f=='clr'){x.eps={};delete x.st;x.seen=false;delete x.min;delete x.ne;clean(k)}
+ sv();toast({go:'برگشت به «در حال تماشا»',hold:'رفت به «کنار گذاشته»',drop:'رها شد',all:'همه قسمت‌ها دیده شد',clr:'پیشرفت پاک شد'}[f]);
+ if(A.pg=='p')renderP(0);const e=$('#stt');if(e)e.innerHTML=sttHTML(k)}
+const sttHTML=k=>{const x=lib[k];if(!x||x.type!='tv'||x.seen||!Object.keys(x.eps||{}).length)return'';return[['','در حال تماشا'],['hold','نگه‌داشته'],['drop','رها شده']].map(([v,l])=>`<button class="wbtn ${(x.st||'')==v?'on':''}" onclick="setSt('${k}','${v}')">${l}</button>`).join('')};
+function setSt(k,v){const x=lib[k];if(!x)return;v?x.st=v:delete x.st;sv();const e=$('#stt');if(e)e.innerHTML=sttHTML(k);if(A.pg=='p')renderP(0)}
 function renderP(an=1){renderStats(an);renderSec(0)}
 function setP(k){PA=k;renderSec()}
 function setPg(p){if(A.pg==p)return;A.pg=p;const P=p=='p';$('#v').hidden=P;$('#prof').hidden=!P;$('#dsc').hidden=P;$('#pcs').hidden=!P;
@@ -320,7 +356,7 @@ async function feed(t,s,p){let r;
 const IO={};
 function pager(gr,sn,load,alive,t,key){IO[key]?.disconnect();let p=0,busy=0,end=0;const sh=new Set(),msg=m=>`<div class="em" style="grid-column:1/-1">${m}</div>`;
  const more=async()=>{if(busy||end||!alive())return;busy=1;
-  try{const{L,tp}=await load(++p);if(!alive())return;const f=L.filter(x=>!sh.has(x.id)&&!(key=='io'&&hid(t,x)));f.forEach(x=>sh.add(x.id));const tpl=document.createElement('template');tpl.innerHTML=f.map(x=>card(nm(x,t))).join('');paintEl(tpl.content);gr.appendChild(tpl.content);if(p>=tp)end=1;if(end&&!gr.children.length)gr.innerHTML=msg('چیزی پیدا نشد.')}
+  try{const{L,tp}=await load(++p);if(!alive())return;const f=L.filter(x=>!sh.has(x.id)&&!(key=='io'&&hid(t,x)));f.forEach(x=>sh.add(x.id));gr.querySelectorAll('.sk').forEach(e=>e.remove());const tpl=document.createElement('template');tpl.innerHTML=f.map(x=>card(nm(x,t))).join('');paintEl(tpl.content);gr.appendChild(tpl.content);if(p>=tp)end=1;if(end&&!gr.children.length)gr.innerHTML=msg('چیزی پیدا نشد.')}
   catch(e){if(p==1)gr.innerHTML=msg(!cfg.tmdb?'ابتدا کلید TMDB را در تنظیمات وارد کن.':'خطا در دریافت اطلاعات.<br>اینترنت یا کلید API را بررسی کن.');end=1}
   busy=0;if(end)sn.remove();else{io.unobserve(sn);io.observe(sn)}};
  const io=IO[key]=new IntersectionObserver(es=>es[0].isIntersecting&&more(),{rootMargin:'500px'});io.observe(sn)}
@@ -339,20 +375,28 @@ async function lnOk(){if(!LN)return 0;try{let p=await LN.checkPermissions();if(p
 async function fire(title,body){if(LN){if(await lnOk())LN.schedule({notifications:[{id:Math.floor(Math.random()*2e9),title,body,schedule:{at:new Date(Date.now()+1500)}}]}).catch(()=>{})}else try{if(window.Notification&&Notification.permission=='granted')new Notification(title,{body})}catch{}}
 async function plan(L){if(!LN||!await lnOk())return;const n=L.filter(x=>x.at>Date.now()).map(x=>({id:x.nid,title:x.title,body:x.body,schedule:{at:new Date(x.at),allowWhileIdle:true}}));try{if(n.length)await LN.schedule({notifications:n})}catch{}}
 async function checkNew(){if(!cfg.tmdb||!nfOn())return;lastChk=Date.now();localStorage.alk=lastChk;
- const tv=Object.values(lib).filter(x=>x.type=='tv').slice(0,25),mv=Object.values(lib).filter(x=>x.type=='movie'&&x.wl).slice(0,25),up=[],pl=[],nw=[];
+ const tv=Object.values(lib).filter(x=>x.type=='tv'&&x.st!='drop').slice(0,25),mv=Object.values(lib).filter(x=>x.type=='movie'&&x.wl).slice(0,25),up=[],pl=[],nw=[];
  await Promise.all([...tv.map(async x=>{try{const d=await T('/tv/'+x.id),l=d.last_episode_to_air,n=d.next_episode_to_air;
   if(l){const key=l.season_number+'-'+l.episode_number;if(x.la&&x.la!=key)nw.push({id:x.id,type:'tv',title:x.title,text:`قسمت ${fa(l.episode_number)} فصل ${fa(l.season_number)} منتشر شد`});x.la=key}
   if(n&&n.air_date){up.push({id:x.id,type:'tv',title:x.title,text:`فصل ${fa(n.season_number)} • قسمت ${fa(n.episode_number)}`,date:n.air_date});pl.push({nid:x.id*2,title:x.title,body:`قسمت ${fa(n.episode_number)} فصل ${fa(n.season_number)} امروز پخش می‌شود`,at:+new Date(n.air_date+'T09:00:00')})}}catch{}}),
  ...mv.map(async x=>{try{const d=await T('/movie/'+x.id);if(d.release_date>=today){up.push({id:x.id,type:'movie',title:x.title,text:'تاریخ انتشار',date:d.release_date});pl.push({nid:x.id*2+1,title:x.title,body:'امروز منتشر می‌شود',at:+new Date(d.release_date+'T09:00:00')})}}catch{}})]);
  sv();UP=up.sort((a,b)=>a.date<b.date?-1:1);nw.forEach(x=>{NF.unshift({...x,at:Date.now(),r:0});fire(x.title,x.text)});svN();plan(pl)}
-function renderN(){const d=v=>new Date(v).toLocaleDateString('fa-IR'),r=(x,t)=>`<div class="nr glass" onclick="go(()=>D('${x.type}',${x.id}))"><b>${x.title}</b><span>${x.text}</span><small>${t}</small></div>`;
- $('#nc').innerHTML=`<h1>اعلان‌ها</h1>${nfOn()?'':'<p class="sub" style="margin:6px 0">اعلان‌ها در تنظیمات خاموش است.</p>'}<h2 style="margin:18px 0 10px">تازه‌ها</h2>${NF.length?NF.map(x=>r(x,d(x.at))).join(''):'<p class="sub">فعلاً خبری نیست.</p>'}<h2 style="margin:22px 0 10px">در راه</h2>${UP.length?UP.map(x=>r(x,d(x.date))).join(''):'<p class="sub">فیلم یا سریالی با تاریخ انتشار نزدیک در فهرستت نیست.</p>'}`}
+function renderN(){const grp=UP.reduce((a,x)=>((a[x.date]??=[]).push(x),a),{}),dl=k=>k==today?'امروز':k==new Date(Date.now()+864e5).toISOString().slice(0,10)?'فردا':new Date(k+'T00:00').toLocaleDateString('fa-IR',{weekday:'long',day:'numeric',month:'long'}),d=v=>new Date(v).toLocaleDateString('fa-IR'),r=(x,t)=>`<div class="nr glass" onclick="go(()=>D('${x.type}',${x.id}))"><b>${x.title}</b><span>${x.text}</span><small>${t}</small></div>`;
+ $('#nc').innerHTML=`<h1>اعلان‌ها</h1>${nfOn()?'':'<p class="sub" style="margin:6px 0">اعلان‌ها در تنظیمات خاموش است.</p>'}<h2 style="margin:18px 0 10px">تازه‌ها</h2>${NF.length?NF.map(x=>r(x,d(x.at))).join(''):'<p class="sub">فعلاً خبری نیست.</p>'}<h2 style="margin:22px 0 10px">در راه</h2>${UP.length?Object.keys(grp).sort().map(k=>`<h3 class="dh2">${dl(k)}</h3>`+grp[k].map(x=>r(x,'')).join('')).join(''):'<p class="sub">فیلم یا سریالی با تاریخ انتشار نزدیک در فهرستت نیست.</p>'}`}
 function openN(){renderN();NF.forEach(x=>x.r=1);svN();ovo('#nf');if(Date.now()-(+localStorage.alk||0)>216e5)checkNew().then(()=>$('#nf').classList.contains('open')&&renderN())}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-(+localStorage.alk||0)>216e5)checkNew()});
 
+/* gestures */
+let sw;document.addEventListener('touchstart',e=>{const f=e.target.closest('#gr .card .fr');sw=f&&{f,x:e.touches[0].clientX,y:e.touches[0].clientY,d:0}},{passive:true});
+document.addEventListener('touchmove',e=>{if(!sw)return;const dx=e.touches[0].clientX-sw.x,dy=e.touches[0].clientY-sw.y;if(!sw.d&&Math.abs(dy)>Math.abs(dx)){sw=0;return}if(Math.abs(dx)>12){sw.d=dx;sw.f.style.transform=`translateX(${Math.max(-90,Math.min(90,dx))}px)`}},{passive:true});
+document.addEventListener('touchend',()=>{if(!sw)return;const{f,d}=sw;sw=0;f.style.transform='';if(Math.abs(d)>70){f.dataset.sw=1;setTimeout(()=>delete f.dataset.sw,400);const k=f.parentNode.dataset.ck;if(k)tg({stopPropagation(){}},k,d>0?'wl':'seen')}});
+document.addEventListener('click',e=>{if(e.target.closest('[data-sw]')){e.stopPropagation();e.preventDefault()}},true);
+let pr;addEventListener('touchstart',e=>{pr=A.pg=='d'&&scrollY<=0&&!$('.ov.open')?e.touches[0].clientY:null},{passive:true});
+addEventListener('touchend',e=>{if(pr!=null&&e.changedTouches[0].clientY-pr>110){C.clear();caches?.delete('al1');toast('در حال تازه‌سازی…');render()}pr=null},{passive:true});
 /* boot */
 $$('[data-ic]').forEach(e=>e.innerHTML=I[e.dataset.ic]);
-$('#k1').value=cfg.tmdb||'';$('#k2').value=cfg.omdb||'';$('#k3').value=cfg.lang||'fa-IR';$('#k4').value=cfg.nf===false?'0':'1';
+$('#k1').value=cfg.tmdb||'';$('#k2').value=cfg.omdb||'';$('#k3').value=cfg.lang||'fa-IR';$('#k4').value=cfg.nf===false?'0':'1';$('#k5').value=cfg.ac||'';applyAc();
 chips();const place=()=>pill($('#seg .on'),$('#pill'));addEventListener('resize',place);document.fonts?.ready.then(place);place();
 if(!cfg.tmdb){ovo('#se');$('#sn').textContent='برای شروع، کلید TMDB (و در صورت تمایل OMDb) را وارد کن. کلیدها فقط روی همین دستگاه می‌مانند.'}else render();badge();if(cfg.tmdb&&Date.now()-(+localStorage.alk||0)>216e5)setTimeout(checkNew,6000);AP?.addListener('backButton',()=>{hw()||AP.exitApp()});addEventListener('popstate',hw);
+localStorage.albk??=Date.now();setTimeout(()=>{if(Object.keys(lib).length>5&&Date.now()-(+localStorage.albk)>12096e5)toast('چند وقت است بکاپ نگرفته‌ای؛ از تنظیمات بکاپ بگیر')},4000);
 </script></body></html>
