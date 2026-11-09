@@ -1,7 +1,6 @@
 name: Build APK
 on:
   push:
-    branches: [main, master]
   workflow_dispatch:
 jobs:
   build:
@@ -27,12 +26,23 @@ jobs:
       - name: Notification permissions
         run: |
           sed -i 's#</manifest>#<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/><uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/><uses-permission android:name="android.permission.USE_EXACT_ALARM"/></manifest>#' android/app/src/main/AndroidManifest.xml
-      - name: Build debug APK
+      - name: Build APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
+      - name: Sign APK with fixed key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/alamat.jks"
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          "$APKSIGNER" sign --ks "$RUNNER_TEMP/alamat.jks" --ks-key-alias "$KEY_ALIAS" --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEY_PASSWORD --out alamat.apk android/app/build/outputs/apk/debug/app-debug.apk
+          "$APKSIGNER" verify --print-certs alamat.apk | head -3
       - uses: actions/upload-artifact@v4
         with:
           name: alamat-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: alamat.apk
